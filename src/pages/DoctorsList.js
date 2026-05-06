@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from 'react';
-// Step 7: Importing Link to allow navigation between pages
 import { Link } from 'react-router-dom';
-// Step 3: Importing tools from your API service
 import { getDoctors, deleteDoctor } from '../services/api';
 
 function DoctorsList() {
-    // Step 4: Managing data, loading, and error states
     const [doctors, setDoctors] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // Function to refresh the list from the backend
     const fetchDoctors = async () => {
         try {
             setLoading(true);
@@ -29,7 +25,6 @@ function DoctorsList() {
         fetchDoctors();
     }, []);
 
-    // Step 3: Delete logic
     const handleDelete = async (id) => {
         if (!id) {
             alert("Error: Doctor ID is missing.");
@@ -39,9 +34,8 @@ function DoctorsList() {
         if (window.confirm("Are you sure you want to remove this doctor?")) {
             try {
                 await deleteDoctor(id);
-                fetchDoctors(); // Refresh list after deleting
+                fetchDoctors(); 
             } catch (err) {
-                // If it fails here, it's usually a CORS issue in the backend
                 alert("Could not delete. Check if CORS is enabled in your .NET Program.cs file.");
             }
         }
@@ -52,7 +46,6 @@ function DoctorsList() {
 
     return (
         <div style={{ padding: '20px' }}>
-            {/* Step 7: Requirement - Navigation link to the Create Page */}
             <Link to="/add">
                 <button style={{ 
                     marginBottom: '20px', 
@@ -73,15 +66,31 @@ function DoctorsList() {
             {doctors.length === 0 ? (
                 <p>No doctors found in the system.</p>
             ) : (
-                <ul>
+                <ul style={{ listStyleType: 'none', padding: 0 }}>
                     {doctors.map(doctor => (
-                        /* Using || to handle both lowercase 'id' and uppercase 'Id' from .NET */
-                        <li key={doctor.id || doctor.Id} style={{ marginBottom: '10px', fontSize: '18px' }}>
-                            {/* FIX: Checking for both .name and .specialization from backend */}
+                        <li key={doctor.id || doctor.Id} style={{ 
+                            marginBottom: '15px', 
+                            fontSize: '18px',
+                            borderBottom: '1px solid #eee',
+                            paddingBottom: '10px' 
+                        }}>
+                            {/* DISPLAYING THE UNIQUE ID STARTING FROM 1000 */}
+                            <span style={{ 
+                                backgroundColor: '#f0f0f0', 
+                                padding: '2px 8px', 
+                                borderRadius: '4px', 
+                                marginRight: '10px',
+                                fontWeight: 'bold',
+                                color: '#555'
+                            }}>
+                                ID: {doctor.id || doctor.Id}
+                            </span>
+
                             <strong>{doctor.name || doctor.Name}</strong> - {doctor.specialization || doctor.Specialization || "No specialty listed"} 
+                            
                             <button 
                                 onClick={() => handleDelete(doctor.id || doctor.Id)}
-                                style={{ marginLeft: '15px', color: 'red', cursor: 'pointer' }}
+                                style={{ marginLeft: '15px', color: 'red', cursor: 'pointer', border: '1px solid red', borderRadius: '3px', padding: '2px 10px' }}
                             >
                                 Delete
                             </button>
